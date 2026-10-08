@@ -1,0 +1,114 @@
+:root {
+  --paper: #f5f7fa;
+  --surface: #ffffff;
+  --ink: #18202b;
+  --muted: #566274;
+  --rule: #d8dee7;
+  --accent: #0f766e;
+  --danger: #b42318;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #12171e;
+    --surface: #1a212b;
+    --ink: #e6eaf0;
+    --muted: #9aa6b6;
+    --rule: #2b3441;
+    --accent: #4fd1c5;
+    --danger: #f97066;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  width: 400px;
+  max-height: 580px;
+  overflow-y: auto;
+  background: var(--paper);
+  color: var(--ink);
+  font: 13px/1.45 system-ui, sans-serif;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  padding: 12px 12px 8px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+
+#search {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+}
+
+#search:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+#count { margin: 6px 2px 0; color: var(--muted); font-size: 12px; min-height: 1em; }
+
+main { padding: 8px 12px 14px; }
+
+ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+
+.item {
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+
+/* The prompt is the question you asked; the response hangs off it on a rule. */
+.prompt { margin: 0 0 8px; font-weight: 600; }
+
+.response {
+  margin: 0;
+  padding-left: 10px;
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+  font: 13px/1.5 ui-serif, Georgia, serif;
+  white-space: pre-wrap;
+}
+
+.prompt, .response {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.prompt { -webkit-line-clamp: 2; line-clamp: 2; }
+.response { -webkit-line-clamp: 3; line-clamp: 3; }
+
+.expanded .prompt, .expanded .response {
+  display: block;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+}
+
+.actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+
+.action {
+  padding: 4px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: 12px/1.2 system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+.action:hover { border-color: var(--accent); color: var(--accent); }
+.action:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.action.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+.meta { margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+
+#empty { margin: 24px 8px; color: var(--muted); text-align: center; }

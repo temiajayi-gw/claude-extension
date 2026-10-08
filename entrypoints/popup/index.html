@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prompt Bookmarks</title>
+  </head>
+  <body>
+    <header>
+      <input
+        id="search"
+        type="search"
+        placeholder="Search prompts and responses"
+        aria-label="Search bookmarks"
+        autofocus
+      />
+      <p id="count" aria-live="polite"></p>
+    </header>
+    <main>
+      <ul id="list"></ul>
+      <p id="empty" hidden></p>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
