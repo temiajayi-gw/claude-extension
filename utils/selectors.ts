@@ -1,18 +1,33 @@
+// The attribute on our bookmark button's host element. It's ours, not claude.ai's.
+export const HOST_ATTR = "data-pb-host";
+
+// claude.ai doesn't serve identical markup to everyone, so each kind of
+// message has several selectors. Any one of them matching is enough.
+export const SELECTOR_VARIANTS = {
+	userMessage: ['[data-testid="user-message"]', '[data-cds="UserMessage"]'],
+	assistantMessage: [
+		'[data-testid="assistant-message"]',
+		'[data-cds="AssistantMessage"]',
+	],
+} as const;
+
+const USER = SELECTOR_VARIANTS.userMessage.join(", ");
+const ASSISTANT = SELECTOR_VARIANTS.assistantMessage.join(", ");
+
 // Every claude.ai-specific selector lives in this file.
 // If Claude's markup changes and the extension stops working, fix it here.
 export const SELECTORS = {
-	userMessage: '[data-cds="UserMessage"]',
-	assistantMessage: '[data-cds="AssistantMessage"]',
+	userMessage: USER,
+	assistantMessage: ASSISTANT,
 	// Matches either kind. querySelectorAll returns them in page order.
-	anyMessage: '[data-cds="UserMessage"], [data-cds="AssistantMessage"]',
+	anyMessage: `${USER}, ${ASSISTANT}`,
 	// Inside a user message, the element that holds just what the user typed.
 	userMessageBody: ".cds-user-message-body",
 	// Page furniture inside a message that must never end up in saved text:
 	// the "50 minutes ago" timestamp (<time>), copy/edit/retry buttons,
 	// screen-reader-only labels, icons, our own bookmark button, and the
 	// status row ("Reading a page", "Fetched: ...") shown above the answer.
-	ignoredInText:
-		'time, button, svg, style, script, .sr-only, [data-pb-host], [data-cds="TurnStatus"], [data-testid="message-actions"]',
+	ignoredInText: `time, button, svg, style, script, .sr-only, [${HOST_ATTR}], [data-cds="TurnStatus"], [data-testid="message-actions"]`,
 	// claude.ai sets this attribute on an assistant message: "true" while it is
 	// working or writing, "false" once it has finished.
 	streamingAttr: "data-is-streaming",

@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getChatId, getPairForResponse } from "../utils/extract";
+import {
+	describeSelectorProblem,
+	getChatId,
+	getPairForResponse,
+} from "../utils/extract";
 import { hashPair } from "../utils/hash";
 import { filterBookmarks } from "../utils/search";
 import { whenFinished } from "../utils/settle";
@@ -172,5 +176,34 @@ describe("whenFinished", () => {
 
 	it("resolves straight away for a message that has already finished", async () => {
 		await whenFinished(document.getElementById("r1")!);
+	});
+});
+
+describe("markup variants", () => {
+	it("reads a pair when the assistant message only has data-testid (the home-machine case)", () => {
+		document.body.innerHTML = `
+      <div data-cds="UserMessage"><div class="cds-user-message-body"><p>Hi</p></div></div>
+      <div data-testid="assistant-message" id="home"><p>Hello</p></div>`;
+		expect(getPairForResponse(document.getElementById("home")!)).toEqual({
+			prompt: "Hi",
+			response: "Hello",
+		});
+	});
+});
+
+describe("describeSelectorProblem", () => {
+	it("returns null when both kinds of message are found", () => {
+		expect(describeSelectorProblem()).toBeNull();
+	});
+
+	it("complains when user messages match but assistant messages don't", () => {
+		document.body.innerHTML =
+			'<div data-cds="UserMessage">hi</div><div class="renamed">hello</div>';
+		expect(describeSelectorProblem()).toMatch(/no assistant messages/);
+	});
+
+	it("complains when nothing matches", () => {
+		document.body.innerHTML = "<p>nothing here</p>";
+		expect(describeSelectorProblem()).toMatch(/no messages at all/);
 	});
 });
