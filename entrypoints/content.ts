@@ -1,14 +1,9 @@
-import {
-	describeSelectorProblem,
-	getChatId,
-	getPairForResponse,
-} from "../utils/extract";
+import { diagnose, logDiagnosis } from "@/utils/diagnose";
+import { getChatId, getPairForResponse } from "../utils/extract";
 import { hashPair } from "../utils/hash";
-import { SELECTORS } from "../utils/selectors";
+import { HOST_ATTR, SELECTORS } from "../utils/selectors";
 import { whenFinished } from "../utils/settle";
 import { hasBookmark, removeBookmark, saveBookmark } from "../utils/storage";
-
-const HOST_ATTR = "data-pb-host";
 
 type State = "waiting" | "ready" | "saved" | "error";
 
@@ -146,15 +141,11 @@ export default defineContentScript({
 		});
 		schedule();
 
-		// Fail loudly if Claude's markup has changed and our selectors don't match.
+		// Fail loudly if Claude's markup has changed and our selectors don't match,
+		// or if we couldn't inject any buttons. Prints a table of what matched.
 		setTimeout(() => {
 			if (!location.pathname.startsWith("/chat/")) return;
-			const problem = describeSelectorProblem();
-			if (problem) {
-				console.warn(
-					`[prompt-bookmarks] ${problem}. claude.ai's markup may have changed: check utils/selectors.ts`,
-				);
-			}
+			logDiagnosis(diagnose());
 		}, 5000);
 	},
 });
