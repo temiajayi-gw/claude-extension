@@ -1,10 +1,14 @@
+const USER = '[data-testid="user-message"], [data-cds="UserMessage"]';
+const ASSISTANT =
+	'[data-testid="assistant-message"], [data-cds="AssistantMessage"]';
+
 // Every claude.ai-specific selector lives in this file.
 // If Claude's markup changes and the extension stops working, fix it here.
 export const SELECTORS = {
-	userMessage: '[data-cds="UserMessage"]',
-	assistantMessage: '[data-cds="AssistantMessage"]',
+	userMessage: USER,
+	assistantMessage: ASSISTANT,
 	// Matches either kind. querySelectorAll returns them in page order.
-	anyMessage: '[data-cds="UserMessage"], [data-cds="AssistantMessage"]',
+	anyMessage: `${USER}, ${ASSISTANT}`,
 	// Inside a user message, the element that holds just what the user typed.
 	userMessageBody: ".cds-user-message-body",
 	// Page furniture inside a message that must never end up in saved text:
