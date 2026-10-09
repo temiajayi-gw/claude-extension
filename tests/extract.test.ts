@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
 	describeSelectorProblem,
 	getChatId,
+	getMessages,
 	getPairForResponse,
 } from "../utils/extract";
 import { hashPair } from "../utils/hash";
@@ -205,5 +206,33 @@ describe("describeSelectorProblem", () => {
 	it("complains when nothing matches", () => {
 		document.body.innerHTML = "<p>nothing here</p>";
 		expect(describeSelectorProblem()).toMatch(/no messages at all/);
+	});
+});
+
+describe("nested matches of the same message", () => {
+	const assistant =
+		'<div data-cds="AssistantMessage" data-testid="assistant-message" id="r"><p>Hello</p></div>';
+	const plain = `<div data-cds="UserMessage"><div class="cds-user-message-body"><p>Hi</p></div></div>${assistant}`;
+	const testidInside = `<div data-cds="UserMessage"><div data-testid="user-message"><div class="cds-user-message-body"><p>Hi</p></div></div></div>${assistant}`;
+	const testidOutside = `<div data-testid="user-message"><div data-cds="UserMessage"><div class="cds-user-message-body"><p>Hi</p></div></div></div>${assistant}`;
+
+	it.each([
+		["no testid wrapper", plain],
+		["testid element inside the cds row", testidInside],
+		["testid element around the cds row", testidOutside],
+	])("counts one message per message (%s)", (_name, html) => {
+		document.body.innerHTML = html;
+		expect(getMessages()).toHaveLength(2);
+	});
+
+	it("reads the same pair whichever way the attributes are nested", () => {
+		const read = (html: string) => {
+			document.body.innerHTML = html;
+			return getPairForResponse(document.getElementById("r")!);
+		};
+		const expected = { prompt: "Hi", response: "Hello" };
+		expect(read(plain)).toEqual(expected);
+		expect(read(testidInside)).toEqual(expected);
+		expect(read(testidOutside)).toEqual(expected);
 	});
 });
