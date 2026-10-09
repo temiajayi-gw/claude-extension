@@ -1,7 +1,7 @@
 import {
+	describeSelectorProblem,
 	getChatId,
 	getPairForResponse,
-	selectorsLookHealthy,
 } from "../utils/extract";
 import { hashPair } from "../utils/hash";
 import { SELECTORS } from "../utils/selectors";
@@ -146,11 +146,13 @@ export default defineContentScript({
 		});
 		schedule();
 
-		// Fail loudly if Claude's markup has changed and our selectors match nothing.
+		// Fail loudly if Claude's markup has changed and our selectors don't match.
 		setTimeout(() => {
-			if (location.pathname.startsWith("/chat/") && !selectorsLookHealthy()) {
+			if (!location.pathname.startsWith("/chat/")) return;
+			const problem = describeSelectorProblem();
+			if (problem) {
 				console.warn(
-					"[prompt-bookmarks] No messages found. claude.ai's markup may have changed: check utils/selectors.ts",
+					`[prompt-bookmarks] ${problem}. claude.ai's markup may have changed: check utils/selectors.ts`,
 				);
 			}
 		}, 5000);
